@@ -4,27 +4,26 @@ from MainUi_ui import Ui_MainUi
 from PySide6.QtWidgets import (
     QMainWindow,
     QFileDialog,
-    QMessageBox,
     QHeaderView,
     QTableView,
     QMenu,
 )
 from PySide6.QtCore import Signal, QThread, Qt
-from PySide6.QtGui import QCursor
+from PySide6.QtGui import QCloseEvent, QCursor
 from Worker import Worker
 from DownloadItem import DownloadItem
 
 
 class Ui_MainFunc(QMainWindow, Ui_MainUi):
     UrlSended = Signal(str)
-    Download = Signal(list,str)
+    Download = Signal(list, str)
 
     def __init__(self, parent=None):
         super(Ui_MainFunc, self).__init__(parent)
         self.setupUi(self)
         self.model = DownloadListModel()
         self.tableDownloadList.setModel(self.model)
-        self.delegate = DownloadTableDelegate(self.model)
+        self.delegate = DownloadTableDelegate()
         self.tableDownloadList.setItemDelegate(self.delegate)
         self.tableDownloadList.horizontalHeader().setSectionResizeMode(
             QHeaderView.ResizeMode.Stretch
@@ -48,6 +47,7 @@ class Ui_MainFunc(QMainWindow, Ui_MainUi):
         self.worker.SendResult.connect(self.AddData)
         self.UrlSended.connect(self.worker.getInfo)
         self.worker.logger.log.connect(self.onLog)
+        self.worker.ReDraw.connect(self.reDrawTable)
         self.Download.connect(self.worker.doDownload)
 
         self.worker.moveToThread(self.thBackground)
@@ -75,7 +75,7 @@ class Ui_MainFunc(QMainWindow, Ui_MainUi):
         self.txtSavePath.setText(path)
 
     def requestDownload(self):
-        self.Download.emit(self.model._data,self.txtSavePath.text())
+        self.Download.emit(self.model._data, self.txtSavePath.text())
 
     def AddData(self, item: DownloadItem):
         row = self.model.rowCount()
@@ -83,3 +83,12 @@ class Ui_MainFunc(QMainWindow, Ui_MainUi):
 
     def onLog(self, log: str):
         self.txtOutput.append(log)
+
+    def reDrawTable(self, row: int):
+        for i in [4, 5, 6, 7]:
+            self.tableDownloadList.update(self.model.index(row, i))
+
+    def closeEvent(self, event: QCloseEvent) -> None:
+        self.thBackground.quit()
+        self.thBackground.wait()
+        return super().closeEvent(event)

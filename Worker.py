@@ -2,14 +2,15 @@ from PySide6.QtCore import QObject, Signal
 from DownloadItem import DownloadItem
 import yt_dlp
 from Logger import Logger
+from YTDLPQtHook import YTDLPQtHook
 
 
 class Worker(QObject):
     SendResult = Signal(DownloadItem)
-    DownloadDone = Signal(int, DownloadItem)
+    ReDraw = Signal(int)
 
-    def __init__(self):
-        super().__init__()
+    def __init__(self, parent=None):
+        super(Worker, self).__init__(parent)
         self.logger = Logger()
 
     def getFormats(self, videoEntry):
@@ -24,7 +25,6 @@ class Worker(QObject):
             if (
                 format_info["vcodec"] != "none"
                 and format_info["acodec"] == "none"
-                # and (format_info["protocol"] in ["http", "https"])
             )
         ]
         audioFormat = [
@@ -37,7 +37,6 @@ class Worker(QObject):
     def getInfo(self, url: str):
         options = {
             "ignoreerrors": "only_download",
-            # "listformats": True,
             "logger": self.logger,
             "color": {"stderr": "no_color", "stdout": "no_color"},
         }
@@ -64,8 +63,9 @@ class Worker(QObject):
             self.SendResult.emit(data)
 
     def doDownload(self, infos: list[DownloadItem], downloadPath: str):
-        print(infos, downloadPath)
         for item in infos:
+            if item.Status == "下載完成":
+                continue
             if (
                 item.SelectedVideoFormat != "不下載影片"
                 and item.SelectedAudioFormat != "不下載音訊"
@@ -75,14 +75,18 @@ class Worker(QObject):
                 format_str = item.SelectedVideoFormat
             elif item.SelectedAudioFormat != "不下載音訊":
                 format_str = item.SelectedAudioFormat
+            hook = YTDLPQtHook(item, infos.index(item))
+            func = lambda row: self.ReDraw.emit(row)
+            hook.ReDraw.connect(func)
             options = {
                 "paths": {"home": downloadPath},
                 "ignoreerrors": "only_download",
                 "logger": self.logger,
                 "color": {"stderr": "no_color", "stdout": "no_color"},
                 "format": format_str,
-                'live_from_start': True
+                "live_from_start": True,
+                "progress_hooks": [hook],
             }
             with yt_dlp.YoutubeDL(options) as ydl:
-                ret = ydl.download([item.Url])
-                self.DownloadDone.emit(ret, item)
+                ydl.download([item.Url])
+            hook.ReDraw.disconnect(func)

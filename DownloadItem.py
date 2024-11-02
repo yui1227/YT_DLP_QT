@@ -14,6 +14,10 @@ class DownloadItem:
     )
     VideoFormat: list
     AudioFormat: list
+    Status: str = field(init=False, default_factory=lambda: "等待下載")
+    Progress: float = field(init=False, default_factory=lambda: 0.0)
+    ETA: str = field(init=False, default_factory=lambda: "未知")
+    Speed: str = field(init=False, default_factory=lambda: "未知")
 
     @staticmethod
     def checkIfAV1(formatlist: list[dict]):

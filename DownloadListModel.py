@@ -1,15 +1,24 @@
-from PySide6.QtCore import QAbstractTableModel, QPersistentModelIndex, Qt, QModelIndex
+from PySide6.QtCore import QAbstractTableModel, QPersistentModelIndex, Qt, QModelIndex,SIGNAL
 
 from DownloadItem import DownloadItem
 
-TITLE, URL, VCODEC, ACODEC = range(4)
+TITLE, URL, VCODEC, ACODEC, STATUS, PROGRESS, ETA, SPEED = range(8)
 
 
 class DownloadListModel(QAbstractTableModel):
     def __init__(self):
         super(DownloadListModel, self).__init__()
         self._data: list[DownloadItem] = []
-        self.columns = ["標題", "網址", "影片格式", "音訊格式"]
+        self.columns = [
+            "標題",
+            "網址",
+            "影片格式",
+            "音訊格式",
+            "狀態",
+            "進度",
+            "剩餘下載時間",
+            "下載速度",
+        ]
 
     def headerData(self, section, orientation, role=...):
         if (
@@ -24,7 +33,7 @@ class DownloadListModel(QAbstractTableModel):
         return len(self._data)
 
     def columnCount(self, index=QModelIndex()):
-        return 4
+        return 8
 
     def flags(self, index):
         if not index.isValid():
@@ -50,7 +59,30 @@ class DownloadListModel(QAbstractTableModel):
                 return self._data[row].SelectedVideoFormat
             elif index.column() == ACODEC:
                 return self._data[row].SelectedAudioFormat
+            elif index.column() == STATUS:
+                return self._data[row].Status
+            elif index.column() == PROGRESS:
+                # return self._data[row].Progress
+                return f'{self._data[row].Progress:.1f}%'
+            elif index.column() == ETA:
+                return self._data[row].ETA
+            elif index.column() == SPEED:
+                return self._data[row].Speed
+
         return None
+    
+    def setData(self, index, value, role=Qt.ItemDataRole.EditRole) -> bool:
+        if not index.isValid():
+            return None
+        if role == Qt.ItemDataRole.EditRole:
+            item = self._data[index.row()]
+            if index.column() == VCODEC:
+                item.SelectedVideoFormat = item.reverse_vfDict[value]
+            elif index.column() == ACODEC:
+                item.SelectedAudioFormat = item.reverse_afDict[value]
+            self.emit(SIGNAL("dataChanged(QModelIndex,QModelIndex)"),index,index)
+            return True
+        return False
 
     def insertRows(self, position, data: DownloadItem, index=QModelIndex()):
         self.beginInsertRows(index, position, position)

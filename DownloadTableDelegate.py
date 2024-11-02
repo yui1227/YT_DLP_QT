@@ -1,66 +1,81 @@
 from PySide6.QtCore import (
-    QAbstractItemModel,
     QModelIndex,
-    QObject,
     QPersistentModelIndex,
+    QSize,
+    SIGNAL,
+    Qt,
 )
-from PySide6.QtWidgets import QStyledItemDelegate, QComboBox, QWidget
+from PySide6.QtWidgets import (
+    QStyleOptionViewItem,
+    QStyledItemDelegate,
+    QComboBox,
+    QStyleOptionProgressBar,
+    QApplication,
+    QStyle,
+    QProgressBar,
+)
 
 from DownloadListModel import DownloadListModel
+from DownloadItem import DownloadItem
 
-TITLE, URL, VCODEC, ACODEC = range(4)
+TITLE, URL, VCODEC, ACODEC, STATUS, PROGRESS, ETA, SPEED = range(8)
 
 
 class DownloadTableDelegate(QStyledItemDelegate):
     def __init__(self, parent=None) -> None:
         super(DownloadTableDelegate, self).__init__(parent)
 
-    def paint(self, painter, option, index):
-        QStyledItemDelegate.paint(self, painter, option, index)
+    def commitAndCloseEditor(self, str):
+        editor = self.sender()
+        if isinstance(editor, (QComboBox)):
+            self.emit(SIGNAL("commitData(QWidget*)"), editor)
+            self.emit(SIGNAL("closeEditor(QWidget*)"), editor)
 
     def setModelData(self, editor, model, index):
-        if index.column() == VCODEC:
-            model._data[index.row()].SelectedVideoFormat = model._data[
-                index.row()
-            ].reverse_vfDict[editor.currentText()]
-        elif index.column() == ACODEC:
-            model._data[index.row()].SelectedAudioFormat = model._data[
-                index.row()
-            ].reverse_afDict[editor.currentText()]
-        return QStyledItemDelegate.setModelData(self, editor, model, index)
+        if index.column() in (VCODEC, ACODEC):
+            model.setData(index, editor.currentText())
+        else:
+            QStyledItemDelegate.setModelData(self, editor, model, index)
 
-    def createEditor(self, parent, option, index):
-        model: DownloadListModel = self.parent()
+    def setEditorData(self, editor, index):
+        text = index.model().data(index, Qt.ItemDataRole.DisplayRole)
+        data: DownloadItem = index.model()._data[index.row()]
         if index.column() == VCODEC:
-            combobox = QComboBox(parent)
-            combobox.setStyleSheet("QComboBox QAbstractItemView {min-width: 600px;}")
+            editor.setStyleSheet("QComboBox QAbstractItemView {min-width: 600px;}")
             default_item = [
                 f"""{"id":<3}\t{"檔案大小":<10}\t{"fps":<10}\t{"副檔名":<8}\t{"視訊編碼":<20}\t{"備註":<15}"""
             ]
-            combobox.addItems(
-                default_item + list(model._data[index.row()].vfDict.values())
-            )
-            disable_item = combobox.model().item(0)
+            editor.addItems(default_item + list(data.vfDict.values()))
+            disable_item = editor.model().item(0)
             disable_item.setEnabled(False)
-            selected_format = model._data[index.row()].SelectedVideoFormat
-            combobox.setCurrentText(
-                model._data[index.row()].vfDict[f"{selected_format}"]
+            editor.setCurrentText(data.vfDict[text])
+        elif index.column() == ACODEC:
+            editor.setStyleSheet("QComboBox QAbstractItemView {min-width: 800px;}")
+            default_item = [
+                f"""{"id":<3}\t{"檔案大小":<20}\t{"副檔名":<4}\t{"音訊編碼":<20}\t{"備註":<15}"""
+            ]
+            editor.addItems(default_item + list(data.afDict.values()))
+            disable_item = editor.model().item(0)
+            disable_item.setEnabled(False)
+            editor.setCurrentText(data.afDict[text])
+        else:
+            QStyledItemDelegate.setEditorData(self, editor, index)
+
+    def createEditor(self, parent, option, index):
+        if index.column() == VCODEC:
+            combobox = QComboBox(parent)
+            self.connect(
+                combobox,
+                SIGNAL("currentTextChanged(QString&)"),
+                self.commitAndCloseEditor,
             )
             return combobox
         elif index.column() == ACODEC:
             combobox = QComboBox(parent)
-            combobox.setStyleSheet("QComboBox QAbstractItemView {min-width: 800px;}")
-            default_item = [
-                f"""{"id":<3}\t{"檔案大小":<20}\t{"副檔名":<4}\t{"音訊編碼":<20}\t{"備註":<15}"""
-            ]
-            combobox.addItems(
-                default_item + list(model._data[index.row()].afDict.values())
-            )
-            disable_item = combobox.model().item(0)
-            disable_item.setEnabled(False)
-            selected_format = model._data[index.row()].SelectedAudioFormat
-            combobox.setCurrentText(
-                model._data[index.row()].afDict[f"{selected_format}"]
+            self.connect(
+                combobox,
+                SIGNAL("currentTextChanged(QString&)"),
+                self.commitAndCloseEditor,
             )
             return combobox
         else:
