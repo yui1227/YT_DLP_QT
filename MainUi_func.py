@@ -7,16 +7,19 @@ from PySide6.QtWidgets import (
     QHeaderView,
     QTableView,
     QMenu,
+    QMessageBox,
 )
-from PySide6.QtCore import Signal, QThread, Qt
+from PySide6.QtCore import Signal, QThread, Qt, QPoint
 from PySide6.QtGui import QCloseEvent, QCursor
 from Worker import Worker
 from DownloadItem import DownloadItem
+from os import system
 
 
 class Ui_MainFunc(QMainWindow, Ui_MainUi):
     UrlSended = Signal(str)
     Download = Signal(list, str)
+    FFMPEG_URL = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip"
 
     def __init__(self, parent=None):
         super(Ui_MainFunc, self).__init__(parent)
@@ -53,12 +56,26 @@ class Ui_MainFunc(QMainWindow, Ui_MainUi):
         self.worker.moveToThread(self.thBackground)
         self.thBackground.start()
 
+        try:
+            import subprocess
+
+            subprocess.run(["ffmpeg"])
+        except:
+            msgBox = QMessageBox(
+                QMessageBox.Icon.Information,
+                "找不到推薦可選相依程式",
+                f'找不到ffmpeg，將導致下載的影片和音訊無法合併，請至以下網址下載，將壓縮檔內的ffmpeg.exe和ffprobe.exe放在跟本程式相同資料夾。<br/><a href="{self.FFMPEG_URL}">{self.FFMPEG_URL}</a>',
+                QMessageBox.StandardButton.Ok,
+            )
+            msgBox.setTextFormat(Qt.TextFormat.RichText)
+            msgBox.exec()
+
     def generateMenu(self):
         menu = QMenu(self)
         menu.addAction("刪除", self.onDelete)
         return menu
 
-    def showMenu(self, pos):
+    def showMenu(self, pos: QPoint):
         self.menu.exec(QCursor.pos())
 
     def onDelete(self):
