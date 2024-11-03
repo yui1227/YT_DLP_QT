@@ -50,12 +50,17 @@ class Worker(QObject):
                     entry["webpage_url"],
                     videoFormat,
                     audioFormat,
+                    entry.get("is_live", False),
                 )
                 self.SendResult.emit(data)
         elif "formats" in info_dict:
             videoFormat, audioFormat = self.getFormats(info_dict)
             data = DownloadItem(
-                info_dict["title"], info_dict["webpage_url"], videoFormat, audioFormat
+                info_dict["title"],
+                info_dict["webpage_url"],
+                videoFormat,
+                audioFormat,
+                info_dict.get("is_live", False),
             )
             self.SendResult.emit(data)
 
@@ -81,9 +86,10 @@ class Worker(QObject):
                 "logger": self.logger,
                 "color": {"stderr": "no_color", "stdout": "no_color"},
                 "format": format_str,
-                "live_from_start": True,
                 "progress_hooks": [hook],
             }
+            if item.IsLive:
+                options["live_from_start"] = True
             with yt_dlp.YoutubeDL(options) as ydl:
                 ydl.download([item.Url])
             hook.ReDraw.disconnect(func)

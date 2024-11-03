@@ -18,7 +18,7 @@ from PySide6.QtWidgets import (
 from DownloadListModel import DownloadListModel
 from DownloadItem import DownloadItem
 
-TITLE, URL, VCODEC, ACODEC, STATUS, PROGRESS, ETA, SPEED = range(8)
+TITLE, URL, VCODEC, ACODEC, STATUS, PROGRESS, ETA, SPEED, ISLIVE = range(9)
 
 
 class DownloadTableDelegate(QStyledItemDelegate):

@@ -13,7 +13,6 @@ from PySide6.QtCore import Signal, QThread, Qt, QPoint
 from PySide6.QtGui import QCloseEvent, QCursor
 from Worker import Worker
 from DownloadItem import DownloadItem
-from os import system
 
 
 class Ui_MainFunc(QMainWindow, Ui_MainUi):

@@ -18,6 +18,7 @@ class DownloadItem:
     Progress: float = field(init=False, default_factory=lambda: 0.0)
     ETA: str = field(init=False, default_factory=lambda: "未知")
     Speed: str = field(init=False, default_factory=lambda: "未知")
+    IsLive: bool
 
     @staticmethod
     def checkIfAV1(formatlist: list[dict]):
