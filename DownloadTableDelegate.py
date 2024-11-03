@@ -22,7 +22,7 @@ TITLE, URL, VCODEC, ACODEC, STATUS, PROGRESS, ETA, SPEED = range(8)
 
 
 class DownloadTableDelegate(QStyledItemDelegate):
-    def __init__(self, parent=None) -> None:
+    def __init__(self, parent=None):
         super(DownloadTableDelegate, self).__init__(parent)
 
     def commitAndCloseEditor(self, str):
@@ -62,15 +62,7 @@ class DownloadTableDelegate(QStyledItemDelegate):
             QStyledItemDelegate.setEditorData(self, editor, index)
 
     def createEditor(self, parent, option, index):
-        if index.column() == VCODEC:
-            combobox = QComboBox(parent)
-            self.connect(
-                combobox,
-                SIGNAL("currentTextChanged(QString&)"),
-                self.commitAndCloseEditor,
-            )
-            return combobox
-        elif index.column() == ACODEC:
+        if index.column() in (VCODEC,ACODEC):
             combobox = QComboBox(parent)
             self.connect(
                 combobox,

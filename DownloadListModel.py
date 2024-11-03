@@ -1,4 +1,10 @@
-from PySide6.QtCore import QAbstractTableModel, QPersistentModelIndex, Qt, QModelIndex,SIGNAL
+from PySide6.QtCore import (
+    QAbstractTableModel,
+    QPersistentModelIndex,
+    Qt,
+    QModelIndex,
+    SIGNAL,
+)
 
 from DownloadItem import DownloadItem
 
@@ -6,8 +12,8 @@ TITLE, URL, VCODEC, ACODEC, STATUS, PROGRESS, ETA, SPEED = range(8)
 
 
 class DownloadListModel(QAbstractTableModel):
-    def __init__(self):
-        super(DownloadListModel, self).__init__()
+    def __init__(self,parent=None):
+        super(DownloadListModel, self).__init__(parent)
         self._data: list[DownloadItem] = []
         self.columns = [
             "標題",
@@ -16,7 +22,7 @@ class DownloadListModel(QAbstractTableModel):
             "音訊格式",
             "狀態",
             "進度",
-            "剩餘下載時間",
+            "剩餘時間",
             "下載速度",
         ]
 
@@ -62,16 +68,17 @@ class DownloadListModel(QAbstractTableModel):
             elif index.column() == STATUS:
                 return self._data[row].Status
             elif index.column() == PROGRESS:
-                # return self._data[row].Progress
-                return f'{self._data[row].Progress:.1f}%'
+                if self._data[row].Progress == -1:
+                    return "未知"
+                return f"{self._data[row].Progress:.1f}%"
             elif index.column() == ETA:
                 return self._data[row].ETA
             elif index.column() == SPEED:
                 return self._data[row].Speed
 
         return None
-    
-    def setData(self, index, value, role=Qt.ItemDataRole.EditRole) -> bool:
+
+    def setData(self, index, value, role=Qt.ItemDataRole.EditRole):
         if not index.isValid():
             return None
         if role == Qt.ItemDataRole.EditRole:
@@ -80,7 +87,7 @@ class DownloadListModel(QAbstractTableModel):
                 item.SelectedVideoFormat = item.reverse_vfDict[value]
             elif index.column() == ACODEC:
                 item.SelectedAudioFormat = item.reverse_afDict[value]
-            self.emit(SIGNAL("dataChanged(QModelIndex,QModelIndex)"),index,index)
+            self.emit(SIGNAL("dataChanged(QModelIndex,QModelIndex)"), index, index)
             return True
         return False
 
