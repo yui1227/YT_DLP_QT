@@ -12,7 +12,7 @@ TITLE, URL, VCODEC, ACODEC, STATUS, PROGRESS, ETA, SPEED = range(8)
 
 
 class DownloadListModel(QAbstractTableModel):
-    def __init__(self,parent=None):
+    def __init__(self, parent=None):
         super(DownloadListModel, self).__init__(parent)
         self._data: list[DownloadItem] = []
         self.columns = [

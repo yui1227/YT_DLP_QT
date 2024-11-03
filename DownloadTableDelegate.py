@@ -62,7 +62,7 @@ class DownloadTableDelegate(QStyledItemDelegate):
             QStyledItemDelegate.setEditorData(self, editor, index)
 
     def createEditor(self, parent, option, index):
-        if index.column() in (VCODEC,ACODEC):
+        if index.column() in (VCODEC, ACODEC):
             combobox = QComboBox(parent)
             self.connect(
                 combobox,

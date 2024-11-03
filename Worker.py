@@ -22,10 +22,7 @@ class Worker(QObject):
         videoFormat = [
             format_info
             for format_info in formats
-            if (
-                format_info["vcodec"] != "none"
-                and format_info["acodec"] == "none"
-            )
+            if (format_info["vcodec"] != "none" and format_info["acodec"] == "none")
         ]
         audioFormat = [
             format_info
