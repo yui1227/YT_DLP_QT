@@ -15,16 +15,20 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QFont, QFontDatabase, QGradient, QIcon,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
-from PySide6.QtWidgets import (QApplication, QGroupBox, QHBoxLayout, QHeaderView,
-    QLabel, QLineEdit, QMainWindow, QPushButton,
-    QSizePolicy, QSpacerItem, QTableView, QTextBrowser,
-    QVBoxLayout, QWidget)
+from PySide6.QtWidgets import (QAbstractItemView, QApplication, QGroupBox, QHBoxLayout,
+    QHeaderView, QLabel, QLineEdit, QMainWindow,
+    QPushButton, QSizePolicy, QSpacerItem, QTableView,
+    QTextBrowser, QVBoxLayout, QWidget)
+import resource_rc
 
 class Ui_MainUi(object):
     def setupUi(self, MainUi):
         if not MainUi.objectName():
             MainUi.setObjectName(u"MainUi")
-        MainUi.resize(526, 469)
+        MainUi.resize(1193, 622)
+        icon = QIcon()
+        icon.addFile(u":/app_icon/frog_icon_removed_bg.ico", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        MainUi.setWindowIcon(icon)
         self.centralwidget = QWidget(MainUi)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
@@ -58,6 +62,7 @@ class Ui_MainUi(object):
 
         self.txtSavePath = QLineEdit(self.centralwidget)
         self.txtSavePath.setObjectName(u"txtSavePath")
+        self.txtSavePath.setReadOnly(True)
 
         self.horizontalLayout_5.addWidget(self.txtSavePath)
 
@@ -75,6 +80,11 @@ class Ui_MainUi(object):
         self.horizontalLayout_2.setObjectName(u"horizontalLayout_2")
         self.tableDownloadList = QTableView(self.groupBox)
         self.tableDownloadList.setObjectName(u"tableDownloadList")
+        self.tableDownloadList.setDragDropOverwriteMode(True)
+        self.tableDownloadList.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
+        self.tableDownloadList.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.tableDownloadList.setVerticalScrollMode(QAbstractItemView.ScrollMode.ScrollPerPixel)
+        self.tableDownloadList.horizontalHeader().setHighlightSections(False)
 
         self.horizontalLayout_2.addWidget(self.tableDownloadList)
 
@@ -99,6 +109,11 @@ class Ui_MainUi(object):
 
         self.horizontalLayout_4.addItem(self.horizontalSpacer)
 
+        self.btnOpenDownloadFolder = QPushButton(self.centralwidget)
+        self.btnOpenDownloadFolder.setObjectName(u"btnOpenDownloadFolder")
+
+        self.horizontalLayout_4.addWidget(self.btnOpenDownloadFolder)
+
         self.btnDownload = QPushButton(self.centralwidget)
         self.btnDownload.setObjectName(u"btnDownload")
 
@@ -119,9 +134,11 @@ class Ui_MainUi(object):
         self.label.setText(QCoreApplication.translate("MainUi", u"Youtube\u7db2\u5740\uff1a", None))
         self.btnAnalysis.setText(QCoreApplication.translate("MainUi", u"\u5206\u6790", None))
         self.label_2.setText(QCoreApplication.translate("MainUi", u"\u5132\u5b58\u4f4d\u7f6e\uff1a", None))
+        self.txtSavePath.setPlaceholderText(QCoreApplication.translate("MainUi", u"\u7559\u7a7a\u5247\u5b58\u5230\u6b64\u7a0b\u5f0f\u4f4d\u7f6e", None))
         self.btnSetSavePath.setText(QCoreApplication.translate("MainUi", u"\u8a2d\u5b9a", None))
-        self.groupBox.setTitle(QCoreApplication.translate("MainUi", u"\u4e0b\u8f09\u5217\u8868", None))
+        self.groupBox.setTitle(QCoreApplication.translate("MainUi", u"\u4e0b\u8f09\u5217\u8868(\u683c\u5f0f\u90e8\u5206\u9ede\u5169\u4e0b\u53ef\u4ee5\u9078\u64c7\u683c\u5f0f)", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("MainUi", u"\u8f38\u51fa", None))
+        self.btnOpenDownloadFolder.setText(QCoreApplication.translate("MainUi", u"\u958b\u555f\u4e0b\u8f09\u8cc7\u6599\u593e", None))
         self.btnDownload.setText(QCoreApplication.translate("MainUi", u"\u958b\u59cb\u4e0b\u8f09", None))
     # retranslateUi
 

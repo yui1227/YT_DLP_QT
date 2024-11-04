@@ -13,7 +13,8 @@ class Worker(QObject):
         super(Worker, self).__init__(parent)
         self.logger = Logger()
 
-    def getFormats(self, videoEntry):
+    @staticmethod
+    def getFormats(videoEntry):
         formats = [
             format_info
             for format_info in videoEntry["formats"]
@@ -44,7 +45,7 @@ class Worker(QObject):
             for entry in info_dict["entries"]:
                 if entry is None:
                     continue
-                videoFormat, audioFormat = self.getFormats(entry)
+                videoFormat, audioFormat = Worker.getFormats(entry)
                 data = DownloadItem(
                     entry["title"],
                     entry["webpage_url"],
@@ -54,7 +55,7 @@ class Worker(QObject):
                 )
                 self.SendResult.emit(data)
         elif "formats" in info_dict:
-            videoFormat, audioFormat = self.getFormats(info_dict)
+            videoFormat, audioFormat = Worker.getFormats(info_dict)
             data = DownloadItem(
                 info_dict["title"],
                 info_dict["webpage_url"],
@@ -69,13 +70,13 @@ class Worker(QObject):
             if item.Status == "下載完成":
                 continue
             if (
-                item.SelectedVideoFormat != "不下載影片"
-                and item.SelectedAudioFormat != "不下載音訊"
+                item.SelectedVideoFormat != "僅音訊"
+                and item.SelectedAudioFormat != "僅影片"
             ):
                 format_str = f"{item.SelectedVideoFormat}+{item.SelectedAudioFormat}"
-            elif item.SelectedVideoFormat != "不下載影片":
+            elif item.SelectedVideoFormat != "僅音訊":
                 format_str = item.SelectedVideoFormat
-            elif item.SelectedAudioFormat != "不下載音訊":
+            elif item.SelectedAudioFormat != "僅影片":
                 format_str = item.SelectedAudioFormat
             hook = YTDLPQtHook(item, infos.index(item))
             func = lambda row: self.ReDraw.emit(row)

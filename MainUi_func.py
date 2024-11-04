@@ -8,28 +8,36 @@ from PySide6.QtWidgets import (
     QTableView,
     QMenu,
     QMessageBox,
+    QAbstractScrollArea,
 )
 from PySide6.QtCore import Signal, QThread, Qt, QPoint
 from PySide6.QtGui import QCloseEvent, QCursor
 from Worker import Worker
 from DownloadItem import DownloadItem
+import yt_dlp.version
+import os
 
 
 class Ui_MainFunc(QMainWindow, Ui_MainUi):
     UrlSended = Signal(str)
     Download = Signal(list, str)
-    FFMPEG_URL = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip"
+    FFMPEG_URL = "https://www.gyan.dpyev/ffmpeg/builds/ffmpeg-release-essentials.zip"
 
     def __init__(self, parent=None):
         super(Ui_MainFunc, self).__init__(parent)
         self.setupUi(self)
+        self.setWindowTitle(
+            f"Youtube影片下載器(YTDLP版本:{yt_dlp.version.CHANNEL}@{yt_dlp.version.__version__})"
+        )
         self.model = DownloadListModel()
         self.tableDownloadList.setModel(self.model)
         self.delegate = DownloadTableDelegate()
         self.tableDownloadList.setItemDelegate(self.delegate)
         self.tableDownloadList.horizontalHeader().setSectionResizeMode(
-            QHeaderView.ResizeMode.Stretch
+            QHeaderView.ResizeMode.Interactive
         )
+        self.tableDownloadList.horizontalHeader().setStretchLastSection(True)
+        self.tableDownloadList.horizontalHeader().setDefaultAlignment(Qt.AlignmentFlag.AlignLeft)
         self.tableDownloadList.setSelectionBehavior(
             QTableView.SelectionBehavior.SelectRows
         )
@@ -43,17 +51,9 @@ class Ui_MainFunc(QMainWindow, Ui_MainUi):
         self.btnAnalysis.clicked.connect(self.Analysis)
         self.btnSetSavePath.clicked.connect(self.SetSavePath)
         self.btnDownload.clicked.connect(self.requestDownload)
+        self.btnOpenDownloadFolder.clicked.connect(self.openDownloadFolder)
 
-        self.thBackground = QThread()
-        self.worker = Worker()
-        self.worker.SendResult.connect(self.AddData)
-        self.UrlSended.connect(self.worker.getInfo)
-        self.worker.logger.log.connect(self.onLog)
-        self.worker.ReDraw.connect(self.reDrawTable)
-        self.Download.connect(self.worker.doDownload)
-
-        self.worker.moveToThread(self.thBackground)
-        self.thBackground.start()
+        self.setupThread()
 
         try:
             import subprocess
@@ -68,6 +68,18 @@ class Ui_MainFunc(QMainWindow, Ui_MainUi):
             )
             msgBox.setTextFormat(Qt.TextFormat.RichText)
             msgBox.exec()
+
+    def setupThread(self):
+        self.thBackground = QThread()
+        self.worker = Worker()
+        self.worker.SendResult.connect(self.AddData)
+        self.UrlSended.connect(self.worker.getInfo)
+        self.worker.logger.log.connect(self.onLog)
+        self.worker.ReDraw.connect(self.reDrawTable)
+        self.Download.connect(self.worker.doDownload)
+
+        self.worker.moveToThread(self.thBackground)
+        self.thBackground.start()
 
     def generateMenu(self):
         menu = QMenu(self)
@@ -105,6 +117,13 @@ class Ui_MainFunc(QMainWindow, Ui_MainUi):
             self.tableDownloadList.update(self.model.index(row, i))
 
     def closeEvent(self, event: QCloseEvent) -> None:
-        self.thBackground.quit()
-        self.thBackground.wait()
+        # self.thBackground.quit()
+        # self.thBackground.wait()
         return super().closeEvent(event)
+    
+    def openDownloadFolder(self):
+        folder_path = self.txtSavePath.text()
+        if len(folder_path)==0:
+            folder_path = os.getcwd()
+        os.system(f"start {folder_path}")
+

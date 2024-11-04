@@ -59,7 +59,7 @@ class DownloadItem:
         self.vfDict["bv[vcodec^=avc1]"] = (
             "best(格式mp4，編碼avc1，壓縮比一般，最廣泛使用的格式)"
         )
-        self.vfDict["不下載影片"] = "不下載影片"
+        self.vfDict["僅音訊"] = "僅音訊"
 
         self.afDict = {}
         for format_info in self.AudioFormat:
@@ -83,7 +83,7 @@ class DownloadItem:
         self.afDict["ba[acodec^=mp4a]"] = (
             "best(格式m4a，編碼mp4a，壓縮比高，最廣泛使用的格式)"
         )
-        self.afDict["不下載音訊"] = "不下載音訊"
+        self.afDict["僅影片"] = "僅影片"
 
         self.reverse_vfDict = {v: k for k, v in self.vfDict.items()}
 

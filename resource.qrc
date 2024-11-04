@@ -1,0 +1,5 @@
+<RCC>
+  <qresource prefix="app_icon">
+    <file>frog_icon_removed_bg.ico</file>
+  </qresource>
+</RCC>
