@@ -1,3 +1,4 @@
+from Config import Config
 from DownloadListModel import DownloadListModel
 from DownloadTableDelegate import DownloadTableDelegate
 from MainUi_ui import Ui_MainUi
@@ -37,7 +38,9 @@ class Ui_MainFunc(QMainWindow, Ui_MainUi):
             QHeaderView.ResizeMode.Interactive
         )
         self.tableDownloadList.horizontalHeader().setStretchLastSection(True)
-        self.tableDownloadList.horizontalHeader().setDefaultAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.tableDownloadList.horizontalHeader().setDefaultAlignment(
+            Qt.AlignmentFlag.AlignLeft
+        )
         self.tableDownloadList.setSelectionBehavior(
             QTableView.SelectionBehavior.SelectRows
         )
@@ -58,7 +61,9 @@ class Ui_MainFunc(QMainWindow, Ui_MainUi):
         try:
             import subprocess
 
-            subprocess.run(["ffmpeg"])
+            subprocess.run(
+                ["ffmpeg"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
+            )
         except:
             msgBox = QMessageBox(
                 QMessageBox.Icon.Information,
@@ -68,6 +73,8 @@ class Ui_MainFunc(QMainWindow, Ui_MainUi):
             )
             msgBox.setTextFormat(Qt.TextFormat.RichText)
             msgBox.exec()
+
+        self.config = Config()
 
     def setupThread(self):
         self.thBackground = QThread()
@@ -120,10 +127,9 @@ class Ui_MainFunc(QMainWindow, Ui_MainUi):
         # self.thBackground.quit()
         # self.thBackground.wait()
         return super().closeEvent(event)
-    
+
     def openDownloadFolder(self):
         folder_path = self.txtSavePath.text()
-        if len(folder_path)==0:
+        if len(folder_path) == 0:
             folder_path = os.getcwd()
         os.system(f"start {folder_path}")
-

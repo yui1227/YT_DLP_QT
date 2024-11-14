@@ -25,7 +25,7 @@ class Ui_MainUi(object):
     def setupUi(self, MainUi):
         if not MainUi.objectName():
             MainUi.setObjectName(u"MainUi")
-        MainUi.resize(1193, 622)
+        MainUi.resize(1200, 630)
         icon = QIcon()
         icon.addFile(u":/app_icon/frog_icon_removed_bg.ico", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         MainUi.setWindowIcon(icon)
