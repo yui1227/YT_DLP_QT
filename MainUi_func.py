@@ -9,7 +9,7 @@ from PySide6.QtWidgets import (
     QTableView,
     QMenu,
     QMessageBox,
-    QAbstractScrollArea,
+    QAbstractItemView,
 )
 from PySide6.QtCore import Signal, QThread, Qt, QPoint
 from PySide6.QtGui import QCloseEvent, QCursor
@@ -34,9 +34,9 @@ class Ui_MainFunc(QMainWindow, Ui_MainUi):
         self.tableDownloadList.setModel(self.model)
         self.delegate = DownloadTableDelegate()
         self.tableDownloadList.setItemDelegate(self.delegate)
-        self.tableDownloadList.horizontalHeader().setSectionResizeMode(
-            QHeaderView.ResizeMode.Interactive
-        )
+        # self.tableDownloadList.horizontalHeader().setSectionResizeMode(
+        #     QHeaderView.ResizeMode.Interactive
+        # )
         self.tableDownloadList.horizontalHeader().setStretchLastSection(True)
         self.tableDownloadList.horizontalHeader().setDefaultAlignment(
             Qt.AlignmentFlag.AlignLeft
@@ -46,6 +46,9 @@ class Ui_MainFunc(QMainWindow, Ui_MainUi):
         )
         self.tableDownloadList.setContextMenuPolicy(
             Qt.ContextMenuPolicy.CustomContextMenu
+        )
+        self.tableDownloadList.setHorizontalScrollMode(
+            QAbstractItemView.ScrollMode.ScrollPerPixel
         )
         self.menu = self.generateMenu()
         self.tableDownloadList.customContextMenuRequested.connect(self.showMenu)
@@ -75,6 +78,12 @@ class Ui_MainFunc(QMainWindow, Ui_MainUi):
             msgBox.exec()
 
         self.config = Config()
+        self.txtSavePath.setText(self.config.getOutputPath())
+        size = self.config.getSize()
+        self.resize(size["width"], size["height"])
+        column_width = self.config.getColumnsWidth()
+        for idx, width in enumerate(column_width):
+            self.tableDownloadList.setColumnWidth(idx, width)
 
     def setupThread(self):
         self.thBackground = QThread()

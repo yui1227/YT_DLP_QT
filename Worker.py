@@ -3,6 +3,7 @@ from DownloadItem import DownloadItem
 import yt_dlp
 from Logger import Logger
 from YTDLPQtHook import YTDLPQtHook
+from Config import Config
 
 
 class Worker(QObject):
@@ -11,7 +12,8 @@ class Worker(QObject):
 
     def __init__(self, parent=None):
         super(Worker, self).__init__(parent)
-        self.logger = Logger()
+        self.config = Config()
+        self.logger = Logger(self.config.getOutputColor())
 
     @staticmethod
     def getFormats(videoEntry):
@@ -49,6 +51,8 @@ class Worker(QObject):
                 data = DownloadItem(
                     entry["title"],
                     entry["webpage_url"],
+                    self.config.getVideoCodec(),
+                    self.config.getAudioCodec(),
                     videoFormat,
                     audioFormat,
                     entry.get("is_live", False),
@@ -59,6 +63,8 @@ class Worker(QObject):
             data = DownloadItem(
                 info_dict["title"],
                 info_dict["webpage_url"],
+                self.config.getVideoCodec(),
+                self.config.getAudioCodec(),
                 videoFormat,
                 audioFormat,
                 info_dict.get("is_live", False),

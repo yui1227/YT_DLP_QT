@@ -6,12 +6,8 @@ from yt_dlp.utils._utils import format_bytes
 class DownloadItem:
     Title: str
     Url: str
-    SelectedVideoFormat: str = field(
-        init=False, default_factory=lambda: "bv[vcodec^=avc1]"
-    )
-    SelectedAudioFormat: str = field(
-        init=False, default_factory=lambda: "ba[acodec^=mp4a]"
-    )
+    SelectedVideoFormat: str
+    SelectedAudioFormat: str
     VideoFormat: list
     AudioFormat: list
     Status: str = field(init=False, default_factory=lambda: "等待下載")
