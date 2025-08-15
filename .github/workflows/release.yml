@@ -8,6 +8,8 @@ on:
 jobs:
   build_and_release:
     runs-on: windows-latest
+    permissions:
+      contents: write # 賦予寫入權限
 
     steps:
       - name: Checkout code
