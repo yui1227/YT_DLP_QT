@@ -6,4 +6,4 @@ playground.py
 build/
 dist/
 *.spec
-build_command.txt
+*.mp3
