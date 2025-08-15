@@ -18,7 +18,7 @@ from PySide6.QtWidgets import (
 from DownloadListModel import DownloadListModel
 from DownloadItem import DownloadItem
 
-TITLE, URL, VCODEC, ACODEC, STATUS, PROGRESS, ETA, SPEED, ISLIVE = range(9)
+TITLE, URL, VCODEC, ACODEC, STATUS, PROGRESS, ETA, SPEED,OUTPUT_FILENAME, ISLIVE = range(10)
 
 
 class DownloadTableDelegate(QStyledItemDelegate):
@@ -70,5 +70,8 @@ class DownloadTableDelegate(QStyledItemDelegate):
                 self.commitAndCloseEditor,
             )
             return combobox
+        # elif index.column() == OUTPUT_FILENAME:
+            # TODO: Implement a custom editor for OUTPUT_FILENAME if needed
+            # pass
         else:
             return QStyledItemDelegate.createEditor(self, parent, option, index)
