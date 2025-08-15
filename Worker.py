@@ -48,6 +48,11 @@ class Worker(QObject):
             "ignoreerrors": "only_download",
             "logger": self.logger,
             "color": {"stderr": "no_color", "stdout": "no_color"},
+            'forcefilename': True,
+            'noprogress': True,
+            'outtmpl': {'default': self.config.default_output_filename_template},
+            'quiet': True,
+            'simulate': True
         }
         with yt_dlp.YoutubeDL(options) as ydl:
             info = ydl.extract_info(url, download=False)
@@ -64,6 +69,7 @@ class Worker(QObject):
                     self.audio_dict.get(self.config.audio_codec),
                     videoFormat,
                     audioFormat,
+                    entry["fulltitle"],
                     entry.get("is_live", False),
                 )
                 self.SendResult.emit(data)
@@ -76,6 +82,7 @@ class Worker(QObject):
                 self.audio_dict.get(self.config.audio_codec),
                 videoFormat,
                 audioFormat,
+                info_dict["fulltitle"],
                 info_dict.get("is_live", False),
             )
             self.SendResult.emit(data)
@@ -103,6 +110,7 @@ class Worker(QObject):
                 "color": {"stderr": "no_color", "stdout": "no_color"},
                 "format": format_str,
                 "progress_hooks": [hook],
+                'outtmpl': {'default': self.config.default_output_filename_template},
             }
             if isMp3:
                 options["final_ext"] = "mp3"

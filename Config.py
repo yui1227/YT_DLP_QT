@@ -5,7 +5,7 @@ import os
 class Config:
     CONFIG_FILENAME = "ytdlpqt.json"
     DEFAULT_DICT = {
-        "default_output_format": "%(title)s.%(ext)s",
+        "default_output_filename_template": "%(title)s.%(ext)s",
         "columns_width": [250] * 9,
         "size": {"width": 1200, "height": 630},
         "output_color": {
@@ -31,12 +31,12 @@ class Config:
             json.dump(self.setting, f, ensure_ascii=False, indent=4)
 
     @property
-    def default_output_format(self) -> str:
-        return self.setting["default_output_format"]
+    def default_output_filename_template(self) -> str:
+        return self.setting["default_output_filename_template"]
     
-    @default_output_format.setter
-    def default_output_format(self, value: str):
-        self.setting["default_output_format"] = value
+    @default_output_filename_template.setter
+    def default_output_filename_template(self, value: str):
+        self.setting["default_output_filename_template"] = value
 
     @property
     def columns_width(self) -> list[int]:

@@ -8,7 +8,7 @@ from PySide6.QtCore import (
 
 from DownloadItem import DownloadItem
 
-TITLE, URL, VCODEC, ACODEC, STATUS, PROGRESS, ETA, SPEED, ISLIVE = range(9)
+TITLE, URL, VCODEC, ACODEC, STATUS, PROGRESS, ETA, SPEED,OUTPUT_FILENAME, ISLIVE = range(10)
 
 
 class DownloadListModel(QAbstractTableModel):
@@ -24,6 +24,7 @@ class DownloadListModel(QAbstractTableModel):
             "進度",
             "剩餘時間",
             "下載速度",
+            "輸出檔案名稱(無附檔名)",
             "直播"
         ]
 
@@ -40,7 +41,7 @@ class DownloadListModel(QAbstractTableModel):
         return len(self._data)
 
     def columnCount(self, index=QModelIndex()):
-        return 9
+        return len(self.columns)
 
     def flags(self, index):
         if not index.isValid():
@@ -76,6 +77,8 @@ class DownloadListModel(QAbstractTableModel):
                 return self._data[row].ETA
             elif index.column() == SPEED:
                 return self._data[row].Speed
+            elif index.column() == OUTPUT_FILENAME:
+                return self._data[row].OutputFileName
             elif index.column() == ISLIVE:
                 return "是" if self._data[row].IsLive else "否"
 

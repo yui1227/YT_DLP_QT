@@ -25,5 +25,5 @@ dependencies = [
     "shiboken6==6.8.0.2",
     "urllib3==2.2.3",
     "websockets==13.1",
-    "yt-dlp>=2025.8.11",
+    "yt-dlp",
 ]

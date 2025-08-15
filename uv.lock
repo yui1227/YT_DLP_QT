@@ -392,5 +392,5 @@ requires-dist = [
     { name = "shiboken6", specifier = "==6.8.0.2" },
     { name = "urllib3", specifier = "==2.2.3" },
     { name = "websockets", specifier = "==13.1" },
-    { name = "yt-dlp", specifier = ">=2025.8.11" },
+    { name = "yt-dlp" },
 ]
