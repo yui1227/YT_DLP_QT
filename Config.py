@@ -5,9 +5,8 @@ import os
 class Config:
     CONFIG_FILENAME = "ytdlpqt.json"
     DEFAULT_DICT = {
-        "default_output_format": "%(title)s [%(id)s].%(ext)s",
+        "default_output_format": "%(title)s.%(ext)s",
         "columns_width": [250] * 9,
-        "output_templates": {"default": "%(title)s [%(id)s].%(ext)s"},
         "size": {"width": 1200, "height": 630},
         "output_color": {
             "info": "aqua",
@@ -15,8 +14,8 @@ class Config:
             "error": "red",
         },
         "output_path": "",
-        "prefferred_video_codec": "bv[vcodec^=avc1]",
-        "prefferred_audio_codec": "ba[acodec^=mp4a]",
+        "prefferred_video_codec": "avc1",
+        "prefferred_audio_codec": "mp4a",
     }
 
     def __init__(self) -> None:
@@ -27,26 +26,58 @@ class Config:
             # 補上後來新加的設定
             self.setting = self.DEFAULT_DICT | json.load(f)
 
-    def getDefaultOutputFormat(self) -> str:
+    def save(self):
+        with open(self.CONFIG_FILENAME, mode="w", encoding="utf-8") as f:
+            json.dump(self.setting, f, ensure_ascii=False, indent=4)
+
+    @property
+    def default_output_format(self) -> str:
         return self.setting["default_output_format"]
+    
+    @default_output_format.setter
+    def default_output_format(self, value: str):
+        self.setting["default_output_format"] = value
 
-    def getColumnsWidth(self) -> list[int]:
+    @property
+    def columns_width(self) -> list[int]:
         return self.setting["columns_width"]
+    
+    @columns_width.setter
+    def columns_width(self, value: list[int]):
+        self.setting["columns_width"] = value
 
-    def getOutputTemplates(self) -> dict[str, str]:
-        return self.setting["output_templates"]
-
-    def getSize(self) -> dict[str, int]:
+    @property
+    def size(self) -> dict[str, int]:
         return self.setting["size"]
+    
+    @size.setter
+    def size(self, value: dict[str, int]):
+        self.setting["size"] = value
 
-    def getOutputColor(self) -> dict[str, str]:
+    @property
+    def output_color(self) -> dict[str, str]:
         return self.setting["output_color"]
 
-    def getOutputPath(self) -> str:
+    @property
+    def output_path(self) -> str:
         return self.setting["output_path"]
+    
+    @output_path.setter
+    def output_path(self, value: str):
+        self.setting["output_path"] = value
 
-    def getVideoCodec(self) -> str:
+    @property
+    def video_codec(self) -> str:
         return self.setting["prefferred_video_codec"]
+    
+    @video_codec.setter
+    def video_codec(self, value: str):
+        self.setting["prefferred_video_codec"] = value
 
-    def getAudioCodec(self) -> str:
+    @property
+    def audio_codec(self) -> str:
         return self.setting["prefferred_audio_codec"]
+    
+    @audio_codec.setter
+    def audio_codec(self, value: str):
+        self.setting["prefferred_audio_codec"] = value

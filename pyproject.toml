@@ -1,0 +1,29 @@
+[project]
+name = "yt-dlp-qt"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "altgraph==0.17.4",
+    "brotli==1.1.0",
+    "certifi==2024.8.30",
+    "charset-normalizer==3.4.0",
+    "idna==3.10",
+    "mutagen==1.47.0",
+    "packaging==24.1",
+    "pefile==2023.2.7",
+    "pycryptodomex==3.21.0",
+    "pyinstaller==6.11.0",
+    "pyinstaller-hooks-contrib==2024.9",
+    "pyside6==6.8.0.2",
+    "pyside6-addons==6.8.0.2",
+    "pyside6-essentials==6.8.0.2",
+    "pywin32-ctypes==0.2.3",
+    "requests==2.32.3",
+    "setuptools==75.3.0",
+    "shiboken6==6.8.0.2",
+    "urllib3==2.2.3",
+    "websockets==13.1",
+    "yt-dlp>=2025.8.11",
+]

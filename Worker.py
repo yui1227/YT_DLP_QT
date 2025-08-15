@@ -10,10 +10,19 @@ class Worker(QObject):
     SendResult = Signal(DownloadItem)
     ReDraw = Signal(int)
 
-    def __init__(self, parent=None):
+    def __init__(self, parent=None, config: Config = None):
         super(Worker, self).__init__(parent)
-        self.config = Config()
-        self.logger = Logger(self.config.getOutputColor())
+        self.config = config
+        self.logger = Logger(self.config.output_color)
+        self.video_dict = {
+            "avc1": "bv[vcodec^=avc1]",
+            "vp09": "bv[vcodec^=vp09]",
+            "av01": "bv[vcodec^=av01]"
+        }
+        self.audio_dict = {
+            "mp4a": "ba[acodec^=mp4a]",
+            "opus": "ba[acodec^=opus]"
+        }
 
     @staticmethod
     def getFormats(videoEntry):
@@ -51,8 +60,8 @@ class Worker(QObject):
                 data = DownloadItem(
                     entry["title"],
                     entry["webpage_url"],
-                    self.config.getVideoCodec(),
-                    self.config.getAudioCodec(),
+                    self.video_dict.get(self.config.video_codec),
+                    self.audio_dict.get(self.config.audio_codec),
                     videoFormat,
                     audioFormat,
                     entry.get("is_live", False),
@@ -63,15 +72,15 @@ class Worker(QObject):
             data = DownloadItem(
                 info_dict["title"],
                 info_dict["webpage_url"],
-                self.config.getVideoCodec(),
-                self.config.getAudioCodec(),
+                self.video_dict.get(self.config.video_codec),
+                self.audio_dict.get(self.config.audio_codec),
                 videoFormat,
                 audioFormat,
                 info_dict.get("is_live", False),
             )
             self.SendResult.emit(data)
 
-    def doDownload(self, infos: list[DownloadItem], downloadPath: str):
+    def doDownload(self, infos: list[DownloadItem], downloadPath: str, isMp3: bool = False):
         for item in infos:
             if item.Status == "下載完成":
                 continue
@@ -85,7 +94,7 @@ class Worker(QObject):
             elif item.SelectedAudioFormat != "僅影片":
                 format_str = item.SelectedAudioFormat
             hook = YTDLPQtHook(item, infos.index(item))
-            func = lambda row: self.ReDraw.emit(row)
+            def func(row): return self.ReDraw.emit(row)
             hook.ReDraw.connect(func)
             options = {
                 "paths": {"home": downloadPath},
@@ -95,6 +104,13 @@ class Worker(QObject):
                 "format": format_str,
                 "progress_hooks": [hook],
             }
+            if isMp3:
+                options["final_ext"] = "mp3"
+                options["format"] = "ba[acodec^=mp3]/ba/b"
+                options["postprocessors"] = [{"key": "FFmpegExtractAudio",
+                                              "nopostoverwrites": False,
+                                              "preferredcodec": "mp3",
+                                              "preferredquality": "5"}]
             if item.IsLive:
                 options["live_from_start"] = True
             with yt_dlp.YoutubeDL(options) as ydl:

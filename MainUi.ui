@@ -124,6 +124,13 @@
        </spacer>
       </item>
       <item>
+       <widget class="QPushButton" name="btnOptions">
+        <property name="text">
+         <string>程式設定</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="btnOpenDownloadFolder">
         <property name="text">
          <string>開啟下載資料夾</string>
@@ -134,6 +141,13 @@
        <widget class="QPushButton" name="btnDownload">
         <property name="text">
          <string>開始下載</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="btnDownloadMp3">
+        <property name="text">
+         <string>直接下載mp3</string>
         </property>
        </widget>
       </item>

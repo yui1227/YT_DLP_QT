@@ -109,6 +109,11 @@ class Ui_MainUi(object):
 
         self.horizontalLayout_4.addItem(self.horizontalSpacer)
 
+        self.btnOptions = QPushButton(self.centralwidget)
+        self.btnOptions.setObjectName(u"btnOptions")
+
+        self.horizontalLayout_4.addWidget(self.btnOptions)
+
         self.btnOpenDownloadFolder = QPushButton(self.centralwidget)
         self.btnOpenDownloadFolder.setObjectName(u"btnOpenDownloadFolder")
 
@@ -118,6 +123,11 @@ class Ui_MainUi(object):
         self.btnDownload.setObjectName(u"btnDownload")
 
         self.horizontalLayout_4.addWidget(self.btnDownload)
+
+        self.btnDownloadMp3 = QPushButton(self.centralwidget)
+        self.btnDownloadMp3.setObjectName(u"btnDownloadMp3")
+
+        self.horizontalLayout_4.addWidget(self.btnDownloadMp3)
 
 
         self.verticalLayout.addLayout(self.horizontalLayout_4)
@@ -138,7 +148,9 @@ class Ui_MainUi(object):
         self.btnSetSavePath.setText(QCoreApplication.translate("MainUi", u"\u8a2d\u5b9a", None))
         self.groupBox.setTitle(QCoreApplication.translate("MainUi", u"\u4e0b\u8f09\u5217\u8868(\u683c\u5f0f\u90e8\u5206\u9ede\u5169\u4e0b\u53ef\u4ee5\u9078\u64c7\u683c\u5f0f)", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("MainUi", u"\u8f38\u51fa", None))
+        self.btnOptions.setText(QCoreApplication.translate("MainUi", u"\u7a0b\u5f0f\u8a2d\u5b9a", None))
         self.btnOpenDownloadFolder.setText(QCoreApplication.translate("MainUi", u"\u958b\u555f\u4e0b\u8f09\u8cc7\u6599\u593e", None))
         self.btnDownload.setText(QCoreApplication.translate("MainUi", u"\u958b\u59cb\u4e0b\u8f09", None))
+        self.btnDownloadMp3.setText(QCoreApplication.translate("MainUi", u"\u76f4\u63a5\u4e0b\u8f09mp3", None))
     # retranslateUi
 

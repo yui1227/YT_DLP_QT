@@ -17,11 +17,11 @@ from Worker import Worker
 from DownloadItem import DownloadItem
 import yt_dlp.version
 import os
-
+from OptionsDialog_func import Ui_OptionFunc
 
 class Ui_MainFunc(QMainWindow, Ui_MainUi):
     UrlSended = Signal(str)
-    Download = Signal(list, str)
+    Download = Signal(list, str, bool)
     FFMPEG_URL = "https://www.gyan.dpyev/ffmpeg/builds/ffmpeg-release-essentials.zip"
 
     def __init__(self, parent=None):
@@ -51,13 +51,24 @@ class Ui_MainFunc(QMainWindow, Ui_MainUi):
             QAbstractItemView.ScrollMode.ScrollPerPixel
         )
         self.menu = self.generateMenu()
-        self.tableDownloadList.customContextMenuRequested.connect(self.showMenu)
+        self.tableDownloadList.customContextMenuRequested.connect(
+            self.showMenu)
 
         # 按鈕事件綁定
         self.btnAnalysis.clicked.connect(self.Analysis)
         self.btnSetSavePath.clicked.connect(self.SetSavePath)
         self.btnDownload.clicked.connect(self.requestDownload)
         self.btnOpenDownloadFolder.clicked.connect(self.openDownloadFolder)
+        self.btnDownloadMp3.clicked.connect(self.requestDownloadMp3)
+        self.btnOptions.clicked.connect(self.openOptionDialog)
+
+        self.config = Config()
+        self.txtSavePath.setText(self.config.output_path)
+        size = self.config.size
+        self.resize(size["width"], size["height"])
+        column_width = self.config.columns_width
+        for idx, width in enumerate(column_width):
+            self.tableDownloadList.setColumnWidth(idx, width)
 
         self.setupThread()
 
@@ -77,17 +88,9 @@ class Ui_MainFunc(QMainWindow, Ui_MainUi):
             msgBox.setTextFormat(Qt.TextFormat.RichText)
             msgBox.exec()
 
-        self.config = Config()
-        self.txtSavePath.setText(self.config.getOutputPath())
-        size = self.config.getSize()
-        self.resize(size["width"], size["height"])
-        column_width = self.config.getColumnsWidth()
-        for idx, width in enumerate(column_width):
-            self.tableDownloadList.setColumnWidth(idx, width)
-
     def setupThread(self):
         self.thBackground = QThread()
-        self.worker = Worker()
+        self.worker = Worker(config=self.config)
         self.worker.SendResult.connect(self.AddData)
         self.UrlSended.connect(self.worker.getInfo)
         self.worker.logger.log.connect(self.onLog)
@@ -112,6 +115,8 @@ class Ui_MainFunc(QMainWindow, Ui_MainUi):
 
     def Analysis(self):
         url = self.txtUrl.text()
+        if url.isspace() or len(url) == 0:
+            return
         self.UrlSended.emit(url)
 
     def SetSavePath(self):
@@ -119,7 +124,10 @@ class Ui_MainFunc(QMainWindow, Ui_MainUi):
         self.txtSavePath.setText(path)
 
     def requestDownload(self):
-        self.Download.emit(self.model._data, self.txtSavePath.text())
+        self.Download.emit(self.model._data, self.txtSavePath.text(), False)
+
+    def requestDownloadMp3(self):
+        self.Download.emit(self.model._data, self.txtSavePath.text(), True)
 
     def AddData(self, item: DownloadItem):
         row = self.model.rowCount()
@@ -133,8 +141,12 @@ class Ui_MainFunc(QMainWindow, Ui_MainUi):
             self.tableDownloadList.update(self.model.index(row, i))
 
     def closeEvent(self, event: QCloseEvent) -> None:
-        # self.thBackground.quit()
-        # self.thBackground.wait()
+        self.config.columns_width = [
+            self.tableDownloadList.columnWidth(i) for i in range(self.model.columnCount())
+        ]
+        self.config.size = {"width": self.width(), "height": self.height()}
+        self.config.output_path = self.txtSavePath.text()
+        self.config.save()
         return super().closeEvent(event)
 
     def openDownloadFolder(self):
@@ -142,3 +154,7 @@ class Ui_MainFunc(QMainWindow, Ui_MainUi):
         if len(folder_path) == 0:
             folder_path = os.getcwd()
         os.system(f"start {folder_path}")
+
+    def openOptionDialog(self):
+        self.optionDialog = Ui_OptionFunc(self,self.config)
+        self.optionDialog.show()
