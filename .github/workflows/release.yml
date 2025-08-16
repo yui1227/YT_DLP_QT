@@ -41,7 +41,7 @@ jobs:
 
       - name: Build with PyInstaller
         run: |
-          uv tool run pyinstaller main.py -i ./frog_icon_removed_bg.ico -w -F
+          uv run pyinstaller main.py -i ./frog_icon_removed_bg.ico -w -F
 
       - name: Create Release
         id: create_release
