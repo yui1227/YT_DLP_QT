@@ -1,38 +1,33 @@
 # YT_DLP_QT README
 
-## 環境建置
+一個基於 PySide6 的 YouTube 影片下載工具，使用 yt-dlp 作為後端下載引擎。
 
-1. **安裝 Python**
-   - 請確保系統已安裝 Python 3.12 或以上版本。
-   - 可從 [Python 官方網站](https://www.python.org/downloads/) 下載並安裝。
+## 功能特色
 
-2. **建立虛擬環境 (可選，但建議使用)**
-   - 在專案目錄中執行以下指令來建立虛擬環境：
-     ```bash
-     python -m venv venv
-     ```
-   - 啟動虛擬環境：
-     - Windows:
-       ```bash
-       .\venv\Scripts\activate
-       ```
-     - macOS/Linux:
-       ```bash
-       source venv/bin/activate
-       ```
+- 支援 YouTube 影片下載
+- 簡易圖形介面
+- 可選擇影片品質與格式
 
-3. **安裝所需套件**
-   - 使用 `pip` 安裝專案所需的套件：
-     ```bash
-     pip install -r requirements.txt
-     ```
+## 安裝方式
 
-## 執行專案
+1. 下載本專案原始碼
+2. 使用 [uv](https://github.com/astral-sh/uv)
+    ```powershell
+    uv sync #安裝所需依賴
+    ```
+3. 使用VSCode等工具編輯程式
 
-1. **執行主程式**
-   - 在終端機中執行以下指令來啟動程式：
-     ```bash
-     python main.py
-     ```
+## 使用方法
 
-## 專案結構
+1. 啟動程式
+2. 輸入 YouTube 影片網址
+3. 選擇下載選項
+4. 點擊「下載」按鈕
+
+## 需求
+
+- [uv](https://github.com/astral-sh/uv)
+
+## 授權
+
+本專案採用 Apache 2.0 授權。

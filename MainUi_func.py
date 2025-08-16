@@ -37,6 +37,7 @@ class Ui_MainFunc(QMainWindow, Ui_MainUi):
         # self.tableDownloadList.horizontalHeader().setSectionResizeMode(
         #     QHeaderView.ResizeMode.Interactive
         # )
+        self.tableDownloadList.horizontalHeader().setSectionsMovable(True)
         self.tableDownloadList.horizontalHeader().setStretchLastSection(True)
         self.tableDownloadList.horizontalHeader().setDefaultAlignment(
             Qt.AlignmentFlag.AlignLeft

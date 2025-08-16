@@ -41,7 +41,7 @@ jobs:
 
       - name: Build with PyInstaller
         run: |
-          uv run pyinstaller main.py -i ./frog_icon_removed_bg.ico -w -F
+          uv run pyinstaller main.py -i ./frog_icon_removed_bg.ico -w -F -n YT_DLP_QT
 
       - name: Create Release
         id: create_release
@@ -66,6 +66,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: 'dist/main.exe' # 根據你的 PyInstaller 輸出路徑修改
-          asset_name: 'main.exe'
+          asset_path: 'dist/YT_DLP_QT.exe' # 根據你的 PyInstaller 輸出路徑修改
+          asset_name: 'YT_DLP_QT.exe'
           asset_content_type: application/octet-stream
