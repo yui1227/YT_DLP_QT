@@ -6,8 +6,8 @@ class Config:
     CONFIG_FILENAME = "ytdlpqt.json"
     DEFAULT_DICT = {
         "default_output_filename_template": "%(title)s.%(ext)s",
-        "columns_width": [250] * 9,
-        "size": {"width": 1200, "height": 630},
+        "columns_state": None,
+        # "size": {"width": 1200, "height": 630},
         "output_color": {
             "info": "aqua",
             "warning": "orange",
@@ -39,12 +39,12 @@ class Config:
         self.setting["default_output_filename_template"] = value
 
     @property
-    def columns_width(self) -> list[int]:
-        return self.setting["columns_width"]
+    def columns_state(self) -> str | None:
+        return self.setting["columns_state"]
     
-    @columns_width.setter
-    def columns_width(self, value: list[int]):
-        self.setting["columns_width"] = value
+    @columns_state.setter
+    def columns_state(self, value: str):
+        self.setting["columns_state"] = value
 
     @property
     def size(self) -> dict[str, int]:

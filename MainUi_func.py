@@ -18,6 +18,8 @@ from DownloadItem import DownloadItem
 import yt_dlp.version
 import os
 from OptionsDialog_func import Ui_OptionFunc
+import base64
+
 
 class Ui_MainFunc(QMainWindow, Ui_MainUi):
     UrlSended = Signal(str)
@@ -67,9 +69,10 @@ class Ui_MainFunc(QMainWindow, Ui_MainUi):
         self.txtSavePath.setText(self.config.output_path)
         size = self.config.size
         self.resize(size["width"], size["height"])
-        column_width = self.config.columns_width
-        for idx, width in enumerate(column_width):
-            self.tableDownloadList.setColumnWidth(idx, width)
+        if self.config.columns_state is not None:
+            self.tableDownloadList.horizontalHeader().restoreState(
+                base64.b64decode(self.config.columns_state.encode())
+            )
 
         self.setupThread()
 
@@ -142,9 +145,9 @@ class Ui_MainFunc(QMainWindow, Ui_MainUi):
             self.tableDownloadList.update(self.model.index(row, i))
 
     def closeEvent(self, event: QCloseEvent) -> None:
-        self.config.columns_width = [
-            self.tableDownloadList.columnWidth(i) for i in range(self.model.columnCount())
-        ]
+        self.config.columns_state = \
+            base64.b64encode(
+                self.tableDownloadList.horizontalHeader().saveState().data()).decode()
         self.config.size = {"width": self.width(), "height": self.height()}
         self.config.output_path = self.txtSavePath.text()
         self.config.save()
@@ -157,5 +160,5 @@ class Ui_MainFunc(QMainWindow, Ui_MainUi):
         os.system(f"start {folder_path}")
 
     def openOptionDialog(self):
-        self.optionDialog = Ui_OptionFunc(self,self.config)
+        self.optionDialog = Ui_OptionFunc(self, self.config)
         self.optionDialog.show()
