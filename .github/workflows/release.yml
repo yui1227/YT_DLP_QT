@@ -52,7 +52,7 @@ jobs:
           tag_name: ${{ steps.get_version.outputs.NEW_VERSION }}
           release_name: Release ${{ steps.get_version.outputs.NEW_VERSION }}
           body: |
-            This is an automated release.
+            ${{ github.event.head_commit.message }}
           draft: false
           prerelease: false
 

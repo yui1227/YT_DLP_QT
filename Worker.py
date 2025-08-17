@@ -110,7 +110,7 @@ class Worker(QObject):
                 "color": {"stderr": "no_color", "stdout": "no_color"},
                 "format": format_str,
                 "progress_hooks": [hook],
-                'outtmpl': {'default': self.config.default_output_filename_template},
+                'outtmpl': {'default': item.OutputFileName},
             }
             if isMp3:
                 options["final_ext"] = "mp3"

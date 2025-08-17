@@ -146,7 +146,7 @@ class Ui_MainUi(object):
         self.label_2.setText(QCoreApplication.translate("MainUi", u"\u5132\u5b58\u4f4d\u7f6e\uff1a", None))
         self.txtSavePath.setPlaceholderText(QCoreApplication.translate("MainUi", u"\u7559\u7a7a\u5247\u5b58\u5230\u6b64\u7a0b\u5f0f\u4f4d\u7f6e", None))
         self.btnSetSavePath.setText(QCoreApplication.translate("MainUi", u"\u8a2d\u5b9a", None))
-        self.groupBox.setTitle(QCoreApplication.translate("MainUi", u"\u4e0b\u8f09\u5217\u8868(\u683c\u5f0f\u90e8\u5206\u9ede\u5169\u4e0b\u53ef\u4ee5\u9078\u64c7\u683c\u5f0f)", None))
+        self.groupBox.setTitle(QCoreApplication.translate("MainUi", u"\u4e0b\u8f09\u5217\u8868(\u683c\u5f0f\u90e8\u5206\u9ede\u5169\u4e0b\u53ef\u4ee5\u9078\u64c7\u683c\u5f0f\uff0c\u8f38\u51fa\u6a94\u540d\u9ede\u5169\u4e0b\u53ef\u66f4\u6539\u8f38\u51fa\u6a94\u540d)", None))
         self.groupBox_2.setTitle(QCoreApplication.translate("MainUi", u"\u8f38\u51fa", None))
         self.btnOptions.setText(QCoreApplication.translate("MainUi", u"\u7a0b\u5f0f\u8a2d\u5b9a", None))
         self.btnOpenDownloadFolder.setText(QCoreApplication.translate("MainUi", u"\u958b\u555f\u4e0b\u8f09\u8cc7\u6599\u593e", None))

@@ -8,7 +8,8 @@ from PySide6.QtCore import (
 
 from DownloadItem import DownloadItem
 
-TITLE, URL, VCODEC, ACODEC, STATUS, PROGRESS, ETA, SPEED,OUTPUT_FILENAME, ISLIVE = range(10)
+TITLE, URL, VCODEC, ACODEC, STATUS, PROGRESS, ETA, SPEED, OUTPUT_FILENAME, ISLIVE = range(
+    10)
 
 
 class DownloadListModel(QAbstractTableModel):
@@ -24,11 +25,11 @@ class DownloadListModel(QAbstractTableModel):
             "進度",
             "剩餘時間",
             "下載速度",
-            "輸出檔案名稱(無附檔名)",
+            "輸出檔名(無附檔名)",
             "直播"
         ]
 
-    def headerData(self, section, orientation, role=...):
+    def headerData(self, section, orientation, role):
         if (
             orientation == Qt.Orientation.Horizontal
             and role == Qt.ItemDataRole.DisplayRole
@@ -46,9 +47,10 @@ class DownloadListModel(QAbstractTableModel):
     def flags(self, index):
         if not index.isValid():
             return Qt.ItemFlag.ItemIsEnabled
-        if index.column() == VCODEC or index.column() == ACODEC:
+        if index.column() in (VCODEC, ACODEC, OUTPUT_FILENAME):
             return Qt.ItemFlag(
-                QAbstractTableModel.flags(self, index) | Qt.ItemFlag.ItemIsEditable
+                QAbstractTableModel.flags(
+                    self, index) | Qt.ItemFlag.ItemIsEditable
             )
         else:
             return Qt.ItemFlag(QAbstractTableModel.flags(self, index))
@@ -93,7 +95,10 @@ class DownloadListModel(QAbstractTableModel):
                 item.SelectedVideoFormat = item.reverse_vfDict[value]
             elif index.column() == ACODEC:
                 item.SelectedAudioFormat = item.reverse_afDict[value]
-            self.emit(SIGNAL("dataChanged(QModelIndex,QModelIndex)"), index, index)
+            elif index.column() == OUTPUT_FILENAME:
+                item.OutputFileName = value
+            self.emit(SIGNAL("dataChanged(QModelIndex,QModelIndex)"),
+                      index, index)
             return True
         return False
 

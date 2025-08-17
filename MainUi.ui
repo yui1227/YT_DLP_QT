@@ -71,7 +71,7 @@
     <item>
      <widget class="QGroupBox" name="groupBox">
       <property name="title">
-       <string>下載列表(格式部分點兩下可以選擇格式)</string>
+       <string>下載列表(格式部分點兩下可以選擇格式，輸出檔名點兩下可更改輸出檔名)</string>
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_2">
        <item>
