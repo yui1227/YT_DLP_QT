@@ -17,13 +17,14 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QComboBox, QDialogButtonBox,
     QHBoxLayout, QLabel, QLineEdit, QMainWindow,
-    QSizePolicy, QVBoxLayout, QWidget)
+    QPushButton, QSizePolicy, QSpacerItem, QVBoxLayout,
+    QWidget)
 
 class Ui_OptionDialog(object):
     def setupUi(self, OptionDialog):
         if not OptionDialog.objectName():
             OptionDialog.setObjectName(u"OptionDialog")
-        OptionDialog.resize(424, 163)
+        OptionDialog.resize(479, 267)
         self.centralwidget = QWidget(OptionDialog)
         self.centralwidget.setObjectName(u"centralwidget")
         self.verticalLayout = QVBoxLayout(self.centralwidget)
@@ -73,6 +74,20 @@ class Ui_OptionDialog(object):
 
         self.verticalLayout.addLayout(self.horizontalLayout_2)
 
+        self.horizontalLayout_4 = QHBoxLayout()
+        self.horizontalLayout_4.setObjectName(u"horizontalLayout_4")
+        self.horizontalSpacer = QSpacerItem(40, 20, QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Minimum)
+
+        self.horizontalLayout_4.addItem(self.horizontalSpacer)
+
+        self.btnReloadStyle = QPushButton(self.centralwidget)
+        self.btnReloadStyle.setObjectName(u"btnReloadStyle")
+
+        self.horizontalLayout_4.addWidget(self.btnReloadStyle)
+
+
+        self.verticalLayout.addLayout(self.horizontalLayout_4)
+
         self.buttonBox = QDialogButtonBox(self.centralwidget)
         self.buttonBox.setObjectName(u"buttonBox")
         self.buttonBox.setOrientation(Qt.Orientation.Horizontal)
@@ -92,5 +107,6 @@ class Ui_OptionDialog(object):
         self.label.setText(QCoreApplication.translate("OptionDialog", u"\u504f\u597d\u683c\u5f0f(\u5f71\u7247)", None))
         self.label_3.setText(QCoreApplication.translate("OptionDialog", u"\u504f\u597d\u683c\u5f0f(\u97f3\u8a0a)", None))
         self.label_2.setText(QCoreApplication.translate("OptionDialog", u"\u8f38\u51fa\u6a94\u6848\u540d\u7a31", None))
+        self.btnReloadStyle.setText(QCoreApplication.translate("OptionDialog", u"\u91cd\u65b0\u6574\u7406\u6a23\u5f0f\u8868", None))
     # retranslateUi
 

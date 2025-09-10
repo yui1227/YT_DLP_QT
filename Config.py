@@ -7,10 +7,10 @@ class Config:
     DEFAULT_DICT = {
         "default_output_filename_template": "%(title)s.%(ext)s",
         "columns_state": None,
-        # "size": {"width": 1200, "height": 630},
+        "size": {"width": 1200, "height": 630},
         "output_color": {
-            "info": "aqua",
-            "warning": "orange",
+            "info": "black",
+            "warning": "black",
             "error": "red",
         },
         "output_path": "",

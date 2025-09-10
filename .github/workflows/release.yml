@@ -41,7 +41,15 @@ jobs:
 
       - name: Build with PyInstaller
         run: |
-          uv run pyinstaller main.py -i ./frog_icon_removed_bg.ico -w -F -n YT_DLP_QT
+          uv run pyinstaller main.py -i ./resources/frog_icon_removed_bg.ico -w -F -n YT_DLP_QT
+      
+      - name: Copy QSS file to dist folder
+        run: |
+          Copy-Item -Path styles.qss -Destination dist\styles.qss
+
+      - name: Make Zip Archive
+        run: |
+          Compress-Archive -Path dist\* -DestinationPath dist\YT_DLP_QT.zip 
 
       - name: Create Release
         id: create_release
@@ -66,6 +74,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: 'dist/YT_DLP_QT.exe' # 根據你的 PyInstaller 輸出路徑修改
-          asset_name: 'YT_DLP_QT.exe'
+          asset_path: 'dist/YT_DLP_QT.zip' # 根據你的 PyInstaller 輸出路徑修改
+          asset_name: 'YT_DLP_QT.zip'
           asset_content_type: application/octet-stream

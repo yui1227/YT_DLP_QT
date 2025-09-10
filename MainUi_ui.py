@@ -19,7 +19,7 @@ from PySide6.QtWidgets import (QAbstractItemView, QApplication, QGroupBox, QHBox
     QHeaderView, QLabel, QLineEdit, QMainWindow,
     QPushButton, QSizePolicy, QSpacerItem, QTableView,
     QTextBrowser, QVBoxLayout, QWidget)
-import resource_rc
+import resources.resources_rc
 
 class Ui_MainUi(object):
     def setupUi(self, MainUi):
@@ -27,7 +27,7 @@ class Ui_MainUi(object):
             MainUi.setObjectName(u"MainUi")
         MainUi.resize(1200, 630)
         icon = QIcon()
-        icon.addFile(u":/app_icon/frog_icon_removed_bg.ico", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
+        icon.addFile(u":/frog_icon_removed_bg.ico", QSize(), QIcon.Mode.Normal, QIcon.State.Off)
         MainUi.setWindowIcon(icon)
         self.centralwidget = QWidget(MainUi)
         self.centralwidget.setObjectName(u"centralwidget")

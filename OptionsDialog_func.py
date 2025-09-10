@@ -1,6 +1,7 @@
 from OptionsDialog_ui import Ui_OptionDialog
-from PySide6.QtWidgets import QMainWindow
+from PySide6.QtWidgets import QMainWindow, QApplication
 from Config import Config
+from os import path
 
 
 class Ui_OptionFunc(QMainWindow, Ui_OptionDialog):
@@ -11,6 +12,7 @@ class Ui_OptionFunc(QMainWindow, Ui_OptionDialog):
         self.config = config
         self.videolist = ["avc1", "vp09", "av01"]
         self.audiolist = ["mp4a", "opus"]
+        self.stylesheet_path = "styles.qss"
 
         self.cmbPreferVideo.addItems(self.videolist)
         self.cmbPreferAudio.addItems(self.audiolist)
@@ -20,6 +22,7 @@ class Ui_OptionFunc(QMainWindow, Ui_OptionDialog):
         self.txtOutputFileNameTemplate.setText(config.default_output_filename_template)
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
+        self.btnReloadStyle.clicked.connect(self.load_stylesheet)
 
     def accept(self):
         self.config.default_output_filename_template = self.txtOutputFileNameTemplate.text()
@@ -30,3 +33,9 @@ class Ui_OptionFunc(QMainWindow, Ui_OptionDialog):
 
     def reject(self):
         self.close()
+        
+    def load_stylesheet(self):
+        if not path.exists(self.stylesheet_path):
+            return ""
+        with open(self.stylesheet_path, "r", encoding='utf-8') as f:
+            QApplication.instance().setStyleSheet(f.read())
