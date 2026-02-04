@@ -166,6 +166,15 @@ wheels = [
 ]
 
 [[package]]
+name = "yt-dlp-ejs"
+version = "0.4.0"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/e9/80/4b6c7f91b373e01cdc18080f41fa399592945abce7db74c2e6d0fb8468db/yt_dlp_ejs-0.4.0.tar.gz", hash = "sha256:3c67e0beb6f9f3603fbcb56f425eabaa37c52243d90d20ccbcce1dd941cfbd07", size = 96768, upload-time = "2026-01-29T16:25:59.964Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/a4/90/8911146822364666be47f184c4180cec20fcc537a268ef40d1ab077dd25b/yt_dlp_ejs-0.4.0-py3-none-any.whl", hash = "sha256:19278cff397b243074df46342bb7616c404296aeaff01986b62b4e21823b0b9c", size = 53600, upload-time = "2026-01-29T16:25:57.87Z" },
+]
+
+[[package]]
 name = "yt-dlp-qt"
 version = "0.1.0"
 source = { virtual = "." }
@@ -173,6 +182,7 @@ dependencies = [
     { name = "pyinstaller" },
     { name = "pyside6" },
     { name = "yt-dlp" },
+    { name = "yt-dlp-ejs" },
 ]
 
 [package.metadata]
@@ -180,4 +190,5 @@ requires-dist = [
     { name = "pyinstaller", specifier = "==6.11.0" },
     { name = "pyside6", specifier = "==6.8.0.2" },
     { name = "yt-dlp" },
+    { name = "yt-dlp-ejs", specifier = ">=0.4.0" },
 ]

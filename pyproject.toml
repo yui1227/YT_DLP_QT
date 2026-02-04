@@ -8,4 +8,5 @@ dependencies = [
     "pyinstaller==6.11.0",
     "pyside6==6.8.0.2",
     "yt-dlp",
+    "yt-dlp-ejs>=0.4.0",
 ]
