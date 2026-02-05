@@ -19,12 +19,19 @@ import yt_dlp.version
 import os
 from OptionsDialog_func import Ui_OptionFunc
 import base64
+import shutil
+import sys
+from pathlib import Path
 
 
 class Ui_MainFunc(QMainWindow, Ui_MainUi):
     UrlSended = Signal(str)
     Download = Signal(list, str, bool)
-    FFMPEG_URL = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip"
+
+    URLS = {
+        "ffmpeg": "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip",
+        "deno": "https://github.com/denoland/deno/releases"
+    }
 
     def __init__(self, parent=None):
         super(Ui_MainFunc, self).__init__(parent)
@@ -32,17 +39,18 @@ class Ui_MainFunc(QMainWindow, Ui_MainUi):
         self.setWindowTitle(
             f"Youtube影片下載器 (YTDLP版本:{yt_dlp.version.CHANNEL}@{yt_dlp.version.__version__})"
         )
-        
+
         self.model = DownloadListModel()
         self.tableDownloadList.setModel(self.model)
         self.delegate = DownloadTableDelegate()
         self.tableDownloadList.setItemDelegate(self.delegate)
-        
+
         # 表格樣式設置
         self.setup_table_style()
-        
+
         self.menu = self.generate_menu()
-        self.tableDownloadList.customContextMenuRequested.connect(self.show_menu)
+        self.tableDownloadList.customContextMenuRequested.connect(
+            self.show_menu)
 
         # 按鈕事件綁定
         self.bind_events()
@@ -51,23 +59,27 @@ class Ui_MainFunc(QMainWindow, Ui_MainUi):
         self.txtSavePath.setText(self.config.output_path)
         size = self.config.size
         self.resize(size["width"], size["height"])
-        
+
         if self.config.columns_state is not None:
             self.tableDownloadList.horizontalHeader().restoreState(
                 base64.b64decode(self.config.columns_state.encode())
             )
 
         self.setup_thread()
-        self.check_ffmpeg()
+        self.check_dependencies()
 
     def setup_table_style(self):
         """設置表格樣式"""
         self.tableDownloadList.horizontalHeader().setSectionsMovable(True)
         self.tableDownloadList.horizontalHeader().setStretchLastSection(True)
-        self.tableDownloadList.horizontalHeader().setDefaultAlignment(Qt.AlignmentFlag.AlignLeft)
-        self.tableDownloadList.setSelectionBehavior(QTableView.SelectionBehavior.SelectRows)
-        self.tableDownloadList.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        self.tableDownloadList.setHorizontalScrollMode(QAbstractItemView.ScrollMode.ScrollPerPixel)
+        self.tableDownloadList.horizontalHeader(
+        ).setDefaultAlignment(Qt.AlignmentFlag.AlignLeft)
+        self.tableDownloadList.setSelectionBehavior(
+            QTableView.SelectionBehavior.SelectRows)
+        self.tableDownloadList.setContextMenuPolicy(
+            Qt.ContextMenuPolicy.CustomContextMenu)
+        self.tableDownloadList.setHorizontalScrollMode(
+            QAbstractItemView.ScrollMode.ScrollPerPixel)
         self.tableDownloadList.setAlternatingRowColors(True)
         self.tableDownloadList.setShowGrid(True)
 
@@ -154,20 +166,49 @@ class Ui_MainFunc(QMainWindow, Ui_MainUi):
         self.optionDialog = Ui_OptionFunc(self, self.config)
         self.optionDialog.show()
 
-    def check_ffmpeg(self):
-        """檢查 FFmpeg 是否存在"""
-        try:
-            import subprocess
-            subprocess.run(
-                ["ffmpeg"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL
-            )
-        except:
-            msgBox = QMessageBox(
-                QMessageBox.Icon.Information,
-                "找不到推薦可選相依程式",
-                f'找不到 FFmpeg，將導致下載的影片和音訊無法合併。\n\n'
-                f'請至以下網址下載，將壓縮檔內的 ffmpeg.exe 和 ffprobe.exe 放在跟本程式相同資料夾：\n\n'
-                f'{self.FFMPEG_URL}',
-                QMessageBox.StandardButton.Ok,
-            )
-            msgBox.exec()
+    def get_app_dir(self):
+        """取得程式執行檔所在的絕對路徑"""
+        if getattr(sys, 'frozen', False):
+            return Path(sys.executable).parent
+        return Path(__file__).parent
+
+    def is_tool_available(self, name):
+        """檢查特定工具是否存在於程式目錄或 PATH"""
+        # 1. 檢查系統 PATH (shutil.which 會自動處理 Windows 的 .exe)
+        if shutil.which(name):
+            return True
+
+        # 2. 檢查程式當前目錄
+        ext = ".exe" if sys.platform == "win32" else ""
+        local_path = self.get_app_dir() / f"{name}{ext}"
+        return local_path.exists()
+
+    def check_dependencies(self):
+        """統一檢查所有必要的相依程式"""
+        missing_tools = []
+
+        # 這裡列出所有要檢查的工具名稱
+        for tool in ["ffmpeg", "deno"]:
+            if not self.is_tool_available(tool):
+                missing_tools.append(tool)
+
+        if missing_tools:
+            self._show_missing_alert(missing_tools)
+            return False
+        return True
+
+    def _show_missing_alert(self, missing_tools):
+        """根據缺少的工具生成警告訊息"""
+        # 建立動態訊息
+        msg_details = ""
+        for tool in missing_tools:
+            url = self.URLS.get(tool, "請搜尋官網下載")
+            msg_details += f"• **{tool.upper()}**: 請至 {url} 下載並放在程式目錄。\n"
+
+        msgBox = QMessageBox()
+        msgBox.setIcon(QMessageBox.Icon.Warning)
+        msgBox.setWindowTitle("缺少的相依程式")
+        msgBox.setText("偵測到系統缺少必要的執行檔，部分功能將受限：")
+        msgBox.setInformativeText(msg_details)
+        msgBox.setStandardButtons(QMessageBox.StandardButton.Ok)
+        msgBox.exec()
